@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -I. -g
 
-test: 
+test: test.cpp
 	$(CC) test.cpp -o test $(CFLAGS)
 
 all: test
