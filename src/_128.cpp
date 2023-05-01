@@ -60,6 +60,7 @@ public:
     }
 };
 */
+/*
 //针对时间空间复杂度进行改进
 class Solution {
 public:
@@ -88,6 +89,40 @@ public:
         else return (*f).second;
     }
 };
+*/
+
+//搜索思想,一维状态的搜索，向邻近扩散，维护一个visited数组用于判断是否已经被搜索
+//复杂度O(n)
+class Solution
+{
+public:
+    int longestConsecutive(vector<int> &nums)
+    {
+        unordered_map<int, bool> maps;
+        for (auto i : nums)
+        {
+            maps[i] = false;
+        }
+        int left, right, _max = 0;
+        for (auto i : nums)
+        {
+            if (maps[i])
+                continue;
+            maps[i] = true;
+            for (left = i - 1; maps.find(left) != maps.end(); --left)
+            {
+                maps[left] = true;
+            }
+            for (right = i + 1; maps.find(right) != maps.end(); ++right)
+            {
+                maps[right] = true;
+            }
+            _max = max(_max, right - left - 1);
+        }
+        return _max;
+    }
+};
+
 
 int main()
 {
