@@ -1,45 +1,47 @@
+from collections import Counter
+
 class Solution:
+    # def minWindow(self, s: str, t: str) -> str:
+    #     cnt_t = Counter(t)
+    #     cnt_s = Counter()
+    #     ans = s + "1"
+    #     left = 0
+    #     for right, x in enumerate(s):
+    #         if x in cnt_t:
+    #             cnt_s[x] += 1
+    #         if cnt_s >= cnt_t:
+    #             while cnt_s >= cnt_t:
+    #                 out = s[left]
+    #                 if out in cnt_t:
+    #                     cnt_s[out] -= 1
+    #                 left += 1
+    #                 if len(ans) > right - left + 1:
+    #                     ans = s[left-1:right+1]
+    #     return ans if len(ans) <= len(s) else ""
+
     def minWindow(self, s: str, t: str) -> str:
-        def check(lettertable: dict):
-            for i in lettertable.values:
-                if i < 0:
-                    return False
-            return True
-        
-        lettertable = dict()
-        for i in t:
-            if i in lettertable:
-                lettertable[i] -= 1
-            else:
-                lettertable[i] = -1
-        
-        start = 0
-        end = 0
-        records = ""
-        flag = True
-        for i, x in enumerate(s):
-            if x in lettertable:
-                start = i
-                lettertable[x] += 1
-                flag = False
-                break
-        if flag:
-            return ""
-        
-        sl = len(s)
-        end = start + 1
-        while end < sl:
-            if s[end] in lettertable:
-                lettertable[s[end]] += 1
-            end += 1
-            if check(lettertable):
-                record = s[start:end] if end - start < len(record) else record
-                lettertable[s[start]] -= 1
-                start += 1
-                while check(lettertable):
-                    if s[start] in lettertable:
-                        lettertable[s[start]] -= 1
-                    start += 1
+        cnt_t = Counter(t)
+        ans_left = 0
+        ans_right = len(s) + 1
+        less = len(cnt_t.keys())
 
+        left = 0
+        for right, x in enumerate(s):
+            if x in cnt_t:
+                cnt_t[x] -= 1
+                if cnt_t[x] == 0:
+                    less -= 1
+            while less <= 0:
+                out = s[left]
+                if out in cnt_t:
+                    cnt_t[out] += 1
+                    if cnt_t[out] == 1:
+                        less += 1
+                left += 1
+                if ans_right - ans_left > right - left + 1:
+                    ans_right = right
+                    ans_left = left - 1
+        return "" if ans_right == len(s) + 1 else s[ans_left:ans_right+1]
 
-            
+t = Solution()
+t.minWindow("ADOBECODEBANC", "ABC")
