@@ -20,4 +20,5 @@ class Solution:
             dfs(root.right, d+1)
         dfs(root, 0)
         ans = [depthdict[i] for i in range(maxd+1)]
+        return ans
         
