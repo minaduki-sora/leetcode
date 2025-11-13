@@ -1,0 +1,39 @@
+from typing import List
+
+class Solution:
+    def maxProfit(self, k: int, prices: List[int]) -> int:
+        n = len(prices)
+        # interest[i][j] 代表第i天进场最多交易k次的三元组：[最大收益,下一个买入时机,下一个卖出时机]
+        interest = [[[0, -1, -1] for i in range(k+1)] for _ in range(n)]
+        for i in range(n-2, 0, -1):
+            for j in range(1, k+1):
+                if prices[i] >= prices[i+1]:
+                    # 阴跌，今天不买
+                    interest[i][j] = interest[i+1][j].copy()
+                else:
+                    if interest[i+1][j][1] == i + 1:
+                        # 明天入场会买入,那么不如今天更低进场
+                        interest[i][j] = [
+                            interest[i+1][j][0] + prices[i+1] - prices[i],
+                            i,
+                            interest[i+1][j][2]
+                        ]
+                    elif interest[i+1][j][1] == -1:
+                        # 明天入场但是当空仓狗,那么吃今天一波就跑
+                        interest[i][j] = [prices[i+1] - prices[i], i, i+1]
+                    else:
+                        #明天入场但是持币观望等待入场时机
+                        nint, nin, nout = interest[i+1][j]
+                        nmax = max(prices[i:nin])
+                        if nmax - prices[i] + interest[nin][j-1][0] > \
+                            nint + ((prices[nin] - prices[i]) if prices[nin] > prices[i] else 0):
+                            interest[i][j] = [nmax - prices[i] + interest[nin][j-1][0], i, prices[i:nin].index(nmax)]
+                        else:
+                            if prices[nin] >= prices[i]:
+                                interest[i][j] = [nint + prices[nin] - prices[i], i, nout]
+                            else:
+                                interest[i][j] = [nint, nin, nout]
+        return interest[0][k][0]
+
+
+
